@@ -14,6 +14,6 @@ class MessageListener {
     @RabbitListener(queues = MESSAGE_QUEUE)
     public void onMessage(MessageEvent message) {
         System.out.println(message);
+        throw  new RuntimeException("occurs error!");
     }
-
 }
