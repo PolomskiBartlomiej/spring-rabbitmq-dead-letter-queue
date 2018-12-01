@@ -1,1 +1,1 @@
-# spring-rabbitmq-delayed-exchange
+# spring-rabbitmq-dead-letter-exchange
