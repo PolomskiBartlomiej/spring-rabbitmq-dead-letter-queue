@@ -42,7 +42,74 @@ to provide this mechanism events must occurs:
     
     
 # project description
+ 
+ Project show how to configure Dead letter mechanism in Spring Boot App
+ 
+ To configure it we must provide :
+ 1. Dead Letter Queue , Dead Letter Exchange and binds it together
+ 2. Configure normal queue to sending message if error occur
+ 3. Configure Ampq to not requeue failed message
+ 
+**1. Dead Letter Queue , Dead Letter Exchange**
+ To configure DLX queue and DLX exchange we must create normal configuration 
+ For Example
+    
+    @Configuration
+    class RabbitDLQConfiguration {
 
+    @Bean
+    @DeadLetter Exchange
+    deadLetterExchange() {
+       return ExchangeBuilder.directExchange(DEAD_LETTER_EXCHANGE).build();
+    }
+
+    @Bean
+    @DeadLetter Queue
+        deadQueue() {
+            return QueueBuilder
+                    .durable(DEAD_LETTER_QUEUE)
+                    .build();
+    }
+
+    @Bean Binding
+    deadLetterBind(@DeadLetter Queue queue, @DeadLetter Exchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(DEAD_LETTER_QUEUE).noargs();
+    }
+    }
+    
+**2. Configure normal queue to sending message if error occur**
+To configure queue to point to the DLX we must add arguments x-dead-letter-exchange and x-dead-letter-routing-key to bean creation:
+
+    @Configuration
+    public class RabbitMessageConfiguration {
+
+    @Bean
+    @Message Queue
+    smsQueue() {
+        return QueueBuilder
+                .durable(MESSAGE_QUEUE)
+                .withArgument("x-dead-letter-exchange", DEAD_LETTER_EXCHANGE)
+                .withArgument("x-dead-letter-routing-key", DEAD_LETTER_QUEUE)
+                .build();
+    }
+    ...
+    }
+    
+**3. Configure Ampq to not requeue failed message**
+To provide mechanism to stop requeu message when failed we can :
+ 1. Set in properties `spring.rabbitmq.listener.simple.default-requeue-rejected=false`
+ 2. catch error and thrown `AmqpRejectAndDontRequeueException()`
+ 3. Configure `SimpleMessageListenerContainer.class`
+ 
+
+
+
+
+
+
+
+ 
+ 
   
  
     
