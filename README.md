@@ -40,7 +40,15 @@ to provide this mechanism events must occurs:
     Similarly, an explicit routing key can be specified by adding the key "dead-letter-routing-key" to the policy.
     Policies can also be defined using the management plugin, see the policy documentation for more details.
     
-    
+# x-death header
+
+ Dlq contains x-death headers contains information about original message configuration:
+ 1. routing key
+ 1. exchange
+ 1. fail reason
+ 
+ 
+
 # project description
  
  Project show how to configure Dead letter mechanism in Spring Boot App
