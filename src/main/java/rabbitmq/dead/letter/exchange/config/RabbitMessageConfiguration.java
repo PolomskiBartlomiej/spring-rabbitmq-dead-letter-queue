@@ -22,7 +22,7 @@ public class RabbitMessageConfiguration {
     @Message Queue
     smsQueue() {
         return QueueBuilder
-                .durable(MESSAGE_QUEUE)
+                .durable(DLQ)
                 .withArgument("x-dead-letter-exchange", DEAD_LETTER_EXCHANGE)
                 .withArgument("x-dead-letter-routing-key", DEAD_LETTER_QUEUE)
                 .build();
@@ -36,7 +36,7 @@ public class RabbitMessageConfiguration {
 
     @Bean Binding
     smsBinder(@Message Queue queue, @Message Exchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(MESSAGE_QUEUE).noargs();
+        return BindingBuilder.bind(queue).to(exchange).with(DLQ).noargs();
     }
 
     @Bean MessagePublisher
